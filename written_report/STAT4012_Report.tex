@@ -1,0 +1,75 @@
+\documentclass[11pt,a4paper]{article}
+\input{myPreliminary}
+
+\newcounter{magicrownumbers}
+\newcommand\rownumber{\stepcounter{magicrownumbers}\arabic{magicrownumbers}}
+
+\usepackage[table]{xcolor}
+%------------------------------------------------------------------------------
+
+\begin{document}
+    
+    % Page 0 for names and table of contents
+    \thispagestyle{empty}
+    \pagenumbering{gobble} 
+    \title{\textsc{STAT 4012} -- Statistical Principles of Deep Learning with Business \\ Group Project}
+    \author{
+        KWOK Ho Hin (SID: \texttt{1155126159}) \\
+        LAI Tsz Chun (SID: \texttt{1155125208}) \\
+        LAM Wai Chui (SID: \texttt{1155152095}) \\
+        LAW Yiu Leung Eric (SID: \texttt{1155149315}) \\
+        TSOI Tung Sing (SID: \texttt{1155127274}) \\
+        LO Chak Kin Steven (SID: \texttt{1155125491})
+    }
+    \date{\today}
+    \maketitle
+    
+    % \newpage
+    \tableofcontents
+    \thispagestyle{empty}
+    \pagenumbering{gobble} 
+    \newpage
+    
+    % Section 1
+    \pagenumbering{arabic}
+    \setcounter{page}{1}
+    
+    % Emotion Detection
+    \section{Real Time Emotion Detection Deep Learning Model}
+    \textbf{This section is contributed by LAI Tsz Chun (SID: 1155125208), LAM Wai Chui (SID: 1155152095) and LAW Yiu Leung Eric (SID: 1155149315).}
+    
+    \subsection{Introduction}
+    
+    \subsection{Dataset}
+    \href{https://www.kaggle.com/datasets/msambare/fer2013}{FER-2013}\cite{FER2013} dataset is selected for model training. The data consists of 48x48 pixel grayscale images of faces. The faces have been automatically registered so that the face is more or less centred and occupies about the same amount of space in each image. The faces are categorized into seven categories (0=Angry, 1=Disgust, 2=Fear, 3=Happy, 4=Neutral, 5=Sad, 6=Surprise). The training set consists of 28,709 examples and the public test set consists of 3,589 examples. \\
+    Samples of training dataset
+    \begin{}
+    
+    \subsection{Project Description}
+    
+    \subsection{Data Preparation for Model Training}
+    \subsubsection{Create Numpy Array}
+    
+    \subsubsection{Splitting Training Dataset and Testing Dataset}
+    
+    \subsection{Model Design}
+    \subsubsection{MTCNN Face Detection Model}
+    
+    \subsubsection{Custom CNN Model}
+    
+    \subsection{Model Training}
+    \subsubsection{Training Specifications}
+    
+    \subsubsection{Model Evaluation}
+    
+    \subsection{Conclusion}
+    
+    \newpage
+    % \thispagestyle{empty}
+    % \pagenumbering{gobble} 
+    \section{Bibliography}
+    \bibliographystyle{unsrt}
+    % \bibliographystyle{plain} % We choose the "plain" reference style
+    \bibliography{refs} % Entries are in the refs.bib file
+    
+\end{document}
