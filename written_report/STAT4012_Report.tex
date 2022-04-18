@@ -39,30 +39,100 @@
     \textbf{This section is contributed by LAI Tsz Chun (SID: 1155125208), LAM Wai Chui (SID: 1155152095) and LAW Yiu Leung Eric (SID: 1155149315).}
     
     \subsection{Introduction}
+    This is an introduction.
     
     \subsection{Dataset}
-    \href{https://www.kaggle.com/datasets/msambare/fer2013}{FER-2013}\cite{FER2013} dataset is selected for model training. The data consists of 48x48 pixel grayscale images of faces. The faces have been automatically registered so that the face is more or less centred and occupies about the same amount of space in each image. The faces are categorized into seven categories (0=Angry, 1=Disgust, 2=Fear, 3=Happy, 4=Neutral, 5=Sad, 6=Surprise). The training set consists of 28,709 examples and the public test set consists of 3,589 examples. \\
-    Samples of training dataset
-    \begin{}
+    \href{https://www.kaggle.com/datasets/msambare/fer2013}{FER-2013} \cite{FER2013} dataset from Kaggle is selected for model training. The data consists of 48x48 pixel grayscale images of faces. The faces have been automatically registered so that the face is more or less centred and occupies about the same amount of space in each image. The faces are categorized into seven categories (0=Angry, 1=Disgust, 2=Fear, 3=Happy, 4=Neutral, 5=Sad, 6=Surprise). The training set consists of 28,709 examples and the public test set consists of 3,589 examples. 
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width = 0.9\textwidth]{emotion_detection/plot/train.pdf}
+        \caption{Training Dataset}
+        \label{fig:train_dataset}
+    \end{figure}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width = 0.9\textwidth]{emotion_detection/plot/test.pdf}
+        \caption{Testing Dataset}
+        \label{fig:test_dataset}
+    \end{figure}
     
-    \subsection{Project Description}
+    % \subsection{Project Description}
     
     \subsection{Data Preparation for Model Training}
-    \subsubsection{Create Numpy Array}
+    The data are stored in \texttt{.jpg} format, in order to use them, we must perform pre-processing to the dataset.
+    \begin{enumerate}
+        \item Read the images using \texttt{OpenCV}.
+        \item Normalized the grayscale from [0, 255] to [0, 1] for increasing training speed.
+        \item Stack up 1-channel grayscale array into 3-channel RGB array, as the final use would be RGB pictures.
+        \item Encode the labels.
+        \item Save the array to \texttt{NumPy} array, then save as \texttt{Pickle} file.
+    \end{enumerate}
+    Noted that the dataset have already split into training and testing datasets from Kaggle, we do not need to split them. \\
+    \textbf{Implementation:} \texttt{emotion\_detection\textbackslash src\textbackslash read\_data.ipynb}
+        
+    % \subsubsection{Create Numpy Array}
     
-    \subsubsection{Splitting Training Dataset and Testing Dataset}
+    % \subsubsection{Splitting Training Dataset and Testing Dataset}
     
     \subsection{Model Design}
-    \subsubsection{MTCNN Face Detection Model}
+    We intended to build a real-time emotion detection AI, so there are two separated models needed, namely face detection model and emotion detection model. Flow of the model:
+    \begin{enumerate}
+        \item Detect face(s) in a photo.
+        \item Capture pixels of the face(s) and resize to 48x48.
+        \item Classify emotion of the faces(s).
+    \end{enumerate}
     
-    \subsubsection{Custom CNN Model}
+    \subsubsection{MTCNN Face Detection Model}
+    MTCNN is a python (pip) library written by Github user \href{https://github.com/ipazc/mtcnn}{ipacz} \cite{MTCNN}, which implements the paper by Zhang, Kaipeng et al. “Joint Face Detection and Alignment Using Multitask Cascaded Convolutional Networks.” \cite{1604.02878} In this paper, they propose a deep cascaded multi-task framework using different features of “sub-models” to each boost their correlating strengths. We choose MTCNN model for detecting faces in picture.
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width = 0.8\textwidth]{written_report/pictures/mtcnn.jpg}
+        \caption{Face Detection using MTCNN}
+        \label{fig:MTCNN}
+    \end{figure}
+    
+    \subsubsection{Augmentation}
+    
+    
+    \subsubsection{Emotion Detection Model}
+    We create and train a custom CNN model, which includes 5 blocks of convolution layers and 2 hidden fully-connected layers. All convolution layers and hidden layers  are using RELU activation, expect the output layer is using softmax activation.
+    \begin{figure}[H]
+        \centering
+        \begin{minipage}[b]{.4\textwidth}
+            \centering
+            \includegraphics[height = 0.9\textheight]{written_report/pictures/model_1.pdf}
+        \end{minipage}
+        \begin{minipage}[b]{.4\textwidth}
+            \centering
+            \includegraphics[height = 0.9\textheight]{written_report/pictures/model_2.pdf}
+        \end{minipage}
+        \caption{Model Architecture}
+        \label{fig:model}
+    \end{figure}
     
     \subsection{Model Training}
     \subsubsection{Training Specifications}
+    Training a very deep CNN requires huge amount of GPU power, in which non of our group member could afford it. Thank to Google, they offer \href{https://research.google.com/colaboratory/}{Colab} which let us to train using their GPU for free.
     
     \subsubsection{Model Evaluation}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width = 0.9\textwidth]{emotion_detection/plot/history.pdf}
+        \caption{Loss and Accuracy}
+        \label{fig:loss_acc}
+    \end{figure}
+    Early stopping was trigger after 54 epochs, the model eventually achieved valid accuracy at around 0.58.
+    
+    \subsection{Demonstration}
     
     \subsection{Conclusion}
+    
+    \newpage
+    \section{Stock Price Forecasting}
+    \textbf{This section is contributed by KWOK Ho Hin (SID: 1155126159), TSOI Tung Sing (SID: 1155127274) and LO Chak Kin Steven (SID: 1155125491).}
+    
+    \subsection{Introduction}
+    
     
     \newpage
     % \thispagestyle{empty}
