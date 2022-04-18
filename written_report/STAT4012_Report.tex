@@ -92,10 +92,10 @@
     \end{figure}
     
     \subsubsection{Augmentation}
-    Too avoid over fitting, we use a technique called augmentation to increase the diversity of your training set by applying random (but realistic) transformations, such as image rotation.
+    Too avoid over fitting, we use a technique called augmentation to increase the diversity of your training set by applying random flip and slight rotation.
     \begin{figure}[H]
         \centering
-        \includegraphics[width = 0.8\textwidth]{emotion_detection/plot/augmentation.pdf}
+        \includegraphics[width = 0.7\textwidth]{emotion_detection/plot/augmentation.pdf}
         \caption{Augmentation}
         \label{fig:augmentation}
     \end{figure}
@@ -130,6 +130,13 @@
     Early stopping was trigger after 54 epochs, the model eventually achieved valid accuracy at around 0.58.
     
     \subsection{Demonstration}
+    A video clip from \href{https://www.youtube.com/watch?v=myjEoDypUD8&pbjreload=102}{94th Academy Awards}\footnote{the video clip is adjusted to 3 fps}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width = 0.8\textwidth]{written_report/pictures/happy.png}
+        \caption{Happy Faces}
+        \label{fig:happy}
+    \end{figure}
     
     \subsection{Conclusion}
     
