@@ -39,7 +39,9 @@
     \textbf{This section is contributed by LAI Tsz Chun (SID: 1155125208), LAM Wai Chui (SID: 1155152095) and LAW Yiu Leung Eric (SID: 1155149315).}
     
     \subsection{Introduction}
-    This is an introduction.
+    The study of Convolutional Neural Network (CNN) in this course has inspired us the importance of CNN in image classification. We further extend our inspiration to facial expression recognition. Emotion serves as an immediate means for humans to interact and sometimes it also affects human behavior. Hence, we aim to replicate human emotional recognition using CNN in a real time manner. \\
+    We designed to build an artificial intelligence (AI) that consists of two models. The first model is a face detection model borrowed from MTCNN. The second model is our custom CNN model for facial expression recognition. The main objective is to recognize seven basic emotional expressions (Angry, Disgust, Fear, Happy, Sad and Surprise) by our custom model with a satisfactory accuracy rate. A demonstration using our model in real time and a model evaluation are also covered to see the performance of the model.
+
     
     \subsection{Dataset}
     \href{https://www.kaggle.com/datasets/msambare/fer2013}{FER-2013} \cite{FER2013} dataset from Kaggle is selected for model training. The data consists of 48x48 pixel grayscale images of faces. The faces have been automatically registered so that the face is more or less centred and occupies about the same amount of space in each image. The faces are categorized into seven categories (0=Angry, 1=Disgust, 2=Fear, 3=Happy, 4=Neutral, 5=Sad, 6=Surprise). The training set consists of 28,709 examples and the public test set consists of 3,589 examples. 
@@ -82,6 +84,7 @@
         \item Classify emotion of the faces(s).
     \end{enumerate}
     
+    % \newpage
     \subsubsection{MTCNN Face Detection Model}
     MTCNN is a python (pip) library written by Github user \href{https://github.com/ipazc/mtcnn}{ipacz} \cite{MTCNN}, which implements the paper by Zhang, Kaipeng et al. “Joint Face Detection and Alignment Using Multitask Cascaded Convolutional Networks.” \cite{1604.02878} In this paper, they propose a deep cascaded multi-task framework using different features of “sub-models” to each boost their correlating strengths. We choose MTCNN model for detecting faces in picture.
     \begin{figure}[H]
@@ -101,7 +104,14 @@
     \end{figure}
     
     \subsubsection{Emotion Detection Model}
-    We create and train a custom CNN model, which includes 5 blocks of convolution layers and 2 hidden fully-connected layers. All convolution layers and hidden layers  are using RELU activation, expect the output layer is using softmax activation.
+    We create and train a custom CNN model. After the augmentation function mentioned above, the pixels are passing through 5 blocks of convolution layers and 2 hidden fully-connected layers. All convolution layers and hidden layers  are using RELU activation, expect the output layer is using softmax activation. \\
+    Block 1 and 2 each consists 2 layers of CNN layers, while block 3 to 5 each consists 3 layers of CNN layers, the filter size is increasing block by block from 64 to 512. In additions, each block has it own batch normalization layers, and from block 2 to 5, l2 regularization is used for kernel regularization. \\
+    \textbf{Implementation:} \texttt{emotion\_detection\textbackslash src\textbackslash model\_train.ipynb}
+    
+    \subsubsection{Compile Model}
+    The loss function is set to be sparse categorical cross-entropy, which is most suitable for multi-classes classification artificial neural network (ANN). Also, Adam is used as the optimizer for model training, with common learning rate $\ng = 10^{-4}$. \\
+    In total, this model consists 33,631,815 parameters, in which 33,628,871 of them are trainable and 2,944 are non-trainable (batch normalization parameters).
+    
     \begin{figure}[H]
         \centering
         \begin{minipage}[b]{.4\textwidth}
@@ -118,7 +128,8 @@
     
     \subsection{Model Training}
     \subsubsection{Training Specifications}
-    Training a very deep CNN requires huge amount of GPU power, in which non of our group member could afford it. Thank to Google, they offer \href{https://research.google.com/colaboratory/}{Colab} which let us to train using their GPU for free.
+    We aim to train the model to an optimal point, neither overfiting nor underfitting. Thus we set to train 200 epochs, but training procedure is expected to be stopped early, if the validation accuracy does not improve after 15 epochs. The final model would the one which has best validation accuracy. \\
+    Training a very deep CNN requires huge amount of GPU power, in which non of our group member could afford it. Thanks to Google, they offer \href{https://research.google.com/colaboratory/}{Colab} which let us to use their GPU for free.
     
     \subsubsection{Model Evaluation}
     \begin{figure}[H]
@@ -127,8 +138,10 @@
         \caption{Loss and Accuracy}
         \label{fig:loss_acc}
     \end{figure}
-    Early stopping was trigger after 54 epochs, the model eventually achieved valid accuracy at around 0.58.
+    Early stopping was trigger after 54 epochs, the model eventually achieved valid accuracy at around 0.58. \\
+    With a \href{https://www.nvidia.com/en-us/data-center/tesla-t4/}{Tesla T4}\footnote{Nvidia Tesla T4 is optimized for mainstream computing environments and features multi-precision Turing Tensor Cores and new RT Cores} GPU, each epoch requires around 70 seconds, in total around an hour for complete training, which is reasonable.
     
+    \newpage
     \subsection{Demonstration}
     A video clip from \href{https://www.youtube.com/watch?v=myjEoDypUD8&pbjreload=102}{94th Academy Awards}\footnote{the video clip is adjusted to 3 fps}
     \begin{figure}[H]
