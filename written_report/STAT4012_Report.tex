@@ -40,6 +40,7 @@
     
     \subsection{Introduction}
     The study of Convolutional Neural Network (CNN) in this course has inspired us the importance of CNN in image classification. We further extend our inspiration to facial expression recognition. Emotion serves as an immediate means for humans to interact and sometimes it also affects human behavior. Hence, we aim to replicate human emotional recognition using CNN in a real time manner. \\
+    \\
     We designed to build an artificial intelligence (AI) that consists of two models. The first model is a face detection model borrowed from MTCNN. The second model is our custom CNN model for facial expression recognition. The main objective is to recognize seven basic emotional expressions (Angry, Disgust, Fear, Happy, Sad and Surprise) by our custom model with a satisfactory accuracy rate. A demonstration using our model in real time and a model evaluation are also covered to see the performance of the model.
 
     
@@ -105,12 +106,15 @@
     
     \subsubsection{Emotion Detection Model}
     We create and train a custom CNN model. After the augmentation function mentioned above, the pixels are passing through 5 blocks of convolution layers and 2 hidden fully-connected layers. All convolution layers and hidden layers  are using RELU activation, expect the output layer is using softmax activation. \\
+    \\
     Block 1 and 2 each consists 2 layers of CNN layers, while block 3 to 5 each consists 3 layers of CNN layers, the filter size is increasing block by block from 64 to 512. In additions, each block has it own batch normalization layers, and from block 2 to 5, l2 regularization is used for kernel regularization. \\
+    \\
     \textbf{Implementation:} \texttt{emotion\_detection\textbackslash src\textbackslash model\_train.ipynb}
     
     \subsubsection{Compile Model}
     The loss function is set to be sparse categorical cross-entropy, which is most suitable for multi-classes classification artificial neural network (ANN). Also, Adam is used as the optimizer for model training, with common learning rate $\ng = 10^{-4}$. \\
-    In total, this model consists 33,631,815 parameters, in which 33,628,871 of them are trainable and 2,944 are non-trainable (batch normalization parameters).
+    \\
+    In total, this model consists 33,631,815 parameters, in which 33,628,871 of them are trainable and 2,944 are non-trainable (parameters for batch normalization).
     
     \begin{figure}[H]
         \centering
@@ -129,6 +133,7 @@
     \subsection{Model Training}
     \subsubsection{Training Specifications}
     We aim to train the model to an optimal point, neither overfiting nor underfitting. Thus we set to train 200 epochs, but training procedure is expected to be stopped early, if the validation accuracy does not improve after 15 epochs. The final model would the one which has best validation accuracy. \\
+    \\
     Training a very deep CNN requires huge amount of GPU power, in which non of our group member could afford it. Thanks to Google, they offer \href{https://research.google.com/colaboratory/}{Colab} which let us to use their GPU for free.
     
     \subsubsection{Model Evaluation}
@@ -182,11 +187,116 @@
 
     
     \newpage
-    \section{Stock Price Forecasting}
+    \section{Cryptocurrencies Price Forecasting}
     \textbf{This section is contributed by KWOK Ho Hin (SID: 1155126159), TSOI Tung Sing (SID: 1155127274) and LO Chak Kin Steven (SID: 1155125491).}
     
     \subsection{Introduction}
+    With the rapid advancement in Deep Learning, experts have been searching for applications of deep learning models in various industries, especially in Finance. Deep Learning models, particularly LSTM model, have been used extensively in developing quantitative trading strategies. Typically, researchers tries to use LSTM to predict stock prices, or implied volatility in the case of options. \\
+    \\
+    In this project, we aimed to incorporate LSTM model in a Crypto Pairs Trading Strategy. We first identified potential cointegrated pairs (token0, token1) and their respective hedge ratio ($\beta$). Then we tried to use LSTM to predict the spread of the pair (i.e. token0 – $\beta~\cdot$ token1) using only price data. A simple pair trading strategy can be designed by keeping track of the long-term mean ($\mu$) and setting a threshold ($e$) – we may buy the spread when it is below $\mu - e$ and sell it when it is above $\mu + e$. It is under the assumption that the cointegrated relationship between the two token will remain unchanged, hence the spread will be a stationary time series and will revert to its long-term mean mu.
     
+    \subsection{Dataset}
+    We have collected 10 months of minute-frequency data for 16 tokens with high market capitalization and trading volumes from binance api. It includes candlesticks data, stored in OHLCV format, aggregated in minute timeframe. 
+    
+    \begin{table}[H]
+        \centering
+        \begin{tabular}{|c|c|c|c|}
+            \hline
+            BTC & ETH & DOGE & BNB \\
+            \hline
+            XRP & TRX & ZIL & ADA \\
+            \hline
+            WAVES & ETC & LTC & MATIC \\
+            \hline
+            LINK & EOS & ATOM & XLM &
+            \hline
+        \end{tabular}
+        \caption{Full List of Tokens}
+        \label{tab:crypto_tokens}
+    \end{table}
+    
+    \subsection{Data Pre-processing / Feature Engineering}
+    Before getting into the model, we processed the data in the following ways:
+    \begin{enumerate}
+        \item Front-filling missing data (if there’s any)
+        \item Compute log returns
+        \item Generate addition features (RSI, EMA, rolling-STD of different window length) 
+        \item Split the dataset into pre-data (for cointegration test, 1 month) and data (for training and testing, remaining 9 months)
+    \end{enumerate}
+    
+    \subsection{Model Design}
+    We adopt a three-step process for our complete model. The flow of our model is as follows:
+    \begin{enumerate}
+        \item 
+            Use nearest-neighbour algorithm with a cross-sectional snapshot (the first observation in pre-data for all 16 tokens) to find the two nearest neighbours for each of the tokens.
+        \item 
+            Pair tokens up with their corresponding neighbours and conduct augmented Engle-Granger Two-Step Cointegration Test on each pair. Rank them in ascending order by the t-statistics.
+        \item 
+            Compute the spread and use a LSTM model in predicting the upcoming movement of the spread
+    \end{enumerate}
+    
+    \subsubsection{Nearest Neighbour}
+    To ease our computation, instead of looping through all the combination of pairs for the 16 tokens (total of $16 \times 15 ~/~ 2 = 120$ pairs) and conduct cointegration test one by one, we form potential pairs by matching them with their two nearest neighbours. By feeding in a cross-sectional snapshot of our data into the nearest-neighbour Algorithm, we identify 38 potential cointegrated pairs, which is less than a third of the original pairs.
+    \begin{table}[H]
+        \centering
+        \begin{tabular}{|c|c|c|}
+            \hline
+            DOGE - ZIL & LINK - BNB & ADA - XRP \\
+            \hline
+            MATIC - BNB & ATOM - ZIL & LTC - DOGE &
+            \hline
+        \end{tabular}
+        \caption{Example of the Pairs}
+        \label{tab:crypto_pairs}
+    \end{table}
+    
+    % ** In addition to the table, I will try to make a graph of the pairs with T-SNE **
+    % But need some time to see see how it works
+    
+    \subsubsection{Cointegration Test}
+    For each of the 38 potential pairs, we conduct an augmented Engle-Granger two step cointegration test which, by the name, consists of two steps.
+    \begin{enumerate}
+        \item Estimating the long-run equilibrium of the two series with OLS regression 
+        \item Conduct a unit root test (Augmented Dicky Fuller Test) on the OLS residuals
+    \end{enumerate}
+    \\
+    The null hypothesis of the test is that there is no cointegrating relationship while the alternative hypothesis suggests that there is cointegrating relationship between the two. We reject the null hypothesis at a 5\% significance level when the $p$-value is smaller than 0.05. \\
+    \\
+    There are a total of 13 pairs that we successfully reject the null hypothesis at 5\% significance level.
+    \begin{table}[H]
+        \centering
+        \begin{tabular}{l|r}
+            pairs & tstat \\
+            \hline \hline
+            [EOS, ZIL] & -5.388334 &
+            [EOS, DOGE] & -5.311655 &
+            [XRP, BNB] & -4.886678 &
+            [XLM, ZIL] & -4.370721 &
+            [LINK, BNB] & -4.352107 &
+            [LTC, ZIL] & -4.210387 &
+            [ADA, LINK] & -4.151885 &
+            [DOGE, ZIL] & -4.104011 &
+            [LTC, DOGE] & -3.956726 &
+            [ADA, XRP] & -3.704049
+        \end{tabular}
+        \caption{Sorted in Ascending Order by t-statistics}
+        \label{tab:crypto_tstat}
+    \end{table}
+    
+    \subsubsection{LSTM}
+    
+    \subsection{Model Analytic}
+    
+    \subsubsection{Model Training}
+    
+    \subsubsection{Model Testing}
+    
+    \subsubsection{Comparsion with Baseline Model}
+    % depends whether have time – use the exact same set of feature to fit into a baseline model like ARIMA
+    
+    \subsection{Backtesting}
+    
+    \subsection{Conclusion}
     
     \newpage
     % \thispagestyle{empty}
