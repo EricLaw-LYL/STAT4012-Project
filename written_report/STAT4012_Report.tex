@@ -16,7 +16,7 @@
     \author{
         KWOK Ho Hin (SID: \texttt{1155126159}) \\
         LAI Tsz Chun (SID: \texttt{1155125208}) \\
-        LAM Wai Chui (SID: \texttt{1155152095}) \\
+        LAM Wai Chiu (SID: \texttt{1155152095}) \\
         LAW Yiu Leung Eric (SID: \texttt{1155149315}) \\
         TSOI Tung Sing (SID: \texttt{1155127274}) \\
         LO Chak Kin Steven (SID: \texttt{1155125491})
@@ -28,6 +28,7 @@
     \tableofcontents
     \thispagestyle{empty}
     \pagenumbering{gobble} 
+    \thispagestyle{empty}
     \newpage
     
     % Section 1
@@ -41,11 +42,11 @@
     \subsection{Introduction}
     The study of Convolutional Neural Network (CNN) in this course has inspired us the importance of CNN in image classification. We further extend our inspiration to facial expression recognition. Emotion serves as an immediate means for humans to interact and sometimes it also affects human behavior. Hence, we aim to replicate human emotional recognition using CNN in a real time manner. \\
     \\
-    We designed to build an artificial intelligence (AI) that consists of two models. The first model is a face detection model borrowed from MTCNN. The second model is our custom CNN model for facial expression recognition. The main objective is to recognize seven basic emotional expressions (Angry, Disgust, Fear, Happy, Sad and Surprise) by our custom model with a satisfactory accuracy rate. A demonstration using our model in real time and a model evaluation are also covered to see the performance of the model.
+    We designed to build an artificial intelligence (AI) that consists of two models. The first model is a face detection model borrowed from MTCNN. The second model is our custom CNN model for facial expression recognition. The main objective is to recognize seven basic emotional expressions (Angry, Disgust, Fear, Happy, Sad and Surprise, Neutral) by our custom model with a satisfactory accuracy rate. A demonstration using our model in real time and a model evaluation are also covered to see the performance of the model.
 
     
     \subsection{Dataset}
-    \href{https://www.kaggle.com/datasets/msambare/fer2013}{FER-2013} \cite{FER2013} dataset from Kaggle is selected for model training. The data consists of 48x48 pixel grayscale images of faces. The faces have been automatically registered so that the face is more or less centred and occupies about the same amount of space in each image. The faces are categorized into seven categories (0=Angry, 1=Disgust, 2=Fear, 3=Happy, 4=Neutral, 5=Sad, 6=Surprise). The training set consists of 28,709 examples and the public test set consists of 3,589 examples. 
+    \href{https://www.kaggle.com/datasets/msambare/fer2013}{FER-2013} \cite{FER2013} dataset from Kaggle is selected for model training. The data consists of $48 \times 48$ pixel grayscale images of faces. The faces have been automatically registered so that the face is more or less centred and occupies about the same amount of space in each image. The faces are categorized into seven categories (0=Angry, 1=Disgust, 2=Fear, 3=Happy, 4=Neutral, 5=Sad, 6=Surprise). The training set consists of 28,709 examples and the public test set consists of 3,589 examples. 
     \begin{figure}[H]
         \centering
         \includegraphics[width = 0.9\textwidth]{emotion_detection/plot/train.pdf}
@@ -62,7 +63,7 @@
     % \subsection{Project Description}
     
     \subsection{Data Preparation for Model Training}
-    The data are stored in \texttt{.jpg} format, in order to use them, we must perform pre-processing to the dataset.
+    The data are stored in \texttt{.jpg} format, in order to use them, we must perform pre-processing to the dataset. We acknowledge that \texttt{Tensorflow} does provide a function \texttt{tf.keras.preprocessing.image.ImageDataGenerator}\footnote{\url{https://www.tensorflow.org/api_docs/python/tf/keras/preprocessing/image/ImageDataGenerator}} for loading image files from folders into data generator, which only load the image into tensor when in needed. However, we insist to save the data in \texttt{NumPy} format in order to speed up training process. Yet, this method have some drawbacks, which occupies about 2 GB of RAM for loading datasets before training, and extra storage space in hard disk.
     \begin{enumerate}
         \item Read the images using \texttt{OpenCV}.
         \item Normalized the grayscale from [0, 255] to [0, 1] for increasing training speed.
@@ -71,6 +72,7 @@
         \item Save the array to \texttt{NumPy} array, then save as \texttt{Pickle} file.
     \end{enumerate}
     Noted that the dataset have already split into training and testing datasets from Kaggle, we do not need to split them. \\
+    \\
     \textbf{Implementation:} \texttt{emotion\_detection\textbackslash src\textbackslash read\_data.ipynb}
         
     % \subsubsection{Create Numpy Array}
@@ -81,7 +83,7 @@
     We intended to build a real-time emotion detection AI, so there are two separated models needed, namely face detection model and emotion detection model. Flow of the model:
     \begin{enumerate}
         \item Detect face(s) in a photo.
-        \item Capture pixels of the face(s) and resize to 48x48.
+        \item Capture pixels of the face(s) and resize to $48 \times 48$.
         \item Classify emotion of the faces(s).
     \end{enumerate}
     
@@ -112,7 +114,7 @@
     \textbf{Implementation:} \texttt{emotion\_detection\textbackslash src\textbackslash model\_train.ipynb}
     
     \subsubsection{Compile Model}
-    The loss function is set to be sparse categorical cross-entropy, which is most suitable for multi-classes classification artificial neural network (ANN). Also, Adam is used as the optimizer for model training, with common learning rate $\ng = 10^{-4}$. \\
+    The loss function is set to be sparse categorical cross-entropy, which is most suitable for multi-classes classification artificial neural network (ANN). Also, Adam is used as the optimizer for model training, with a common learning rate $\ng = 10^{-4}$. \\
     \\
     In total, this model consists 33,631,815 parameters, in which 33,628,871 of them are trainable and 2,944 are non-trainable (parameters for batch normalization).
     
@@ -132,7 +134,7 @@
     
     \subsection{Model Training}
     \subsubsection{Training Specifications}
-    We aim to train the model to an optimal point, neither overfiting nor underfitting. Thus we set to train 200 epochs, but training procedure is expected to be stopped early, if the validation accuracy does not improve after 15 epochs. The final model would the one which has best validation accuracy. \\
+    We aim to train the model to an optimal point, neither overfiting nor underfitting. Thus, we set to train 200 epochs, but training procedure is expected to be stopped early, if the validation accuracy does not improve after 15 epochs. The final model would the one which has best validation accuracy. \\
     \\
     Training a very deep CNN requires huge amount of GPU power, in which non of our group member could afford it. Thanks to Google, they offer \href{https://research.google.com/colaboratory/}{Colab} which let us to use their GPU for free.
     
@@ -148,13 +150,28 @@
     
     \newpage
     \subsection{Demonstration}
-    A video clip from \href{https://www.youtube.com/watch?v=myjEoDypUD8&pbjreload=102}{94th Academy Awards}\footnote{the video clip is adjusted to 3 fps}
+    
+    % \subsubsection{Import Video}
+    This AI emotion detection solution not only support real time detection, it also allows end-users input a video for detection. For demonstration, we use a video clip from \href{https://www.youtube.com/watch?v=myjEoDypUD8&pbjreload=102}{94th Academy Awards}\footnote{the video clip is adjusted to 3 fps}. With sufficient resolutions, the AI could easily detect happy faces.
     \begin{figure}[H]
         \centering
-        \includegraphics[width = 0.8\textwidth]{written_report/pictures/happy.png}
+        \includegraphics[width = 0.7\textwidth]{written_report/pictures/happy.png}
         \caption{Happy Faces}
         \label{fig:happy}
     \end{figure}
+    \noindent
+    \textbf{Implementation:} \texttt{emotion\_detection\textbackslash src\textbackslash video.py} \\
+    \\
+    % \subsubsection{Live Webcam}
+    Back to our original objective of real time emotion detection, we use laptop webcam to capture real-time image, then pass it through into the model. The model runs pretty well in terms of performance, expect this demonstration is running on CPU, which results in very low frame rate.
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width = 0.5\textwidth]{written_report/pictures/live_demo.png}
+        \caption{Live Webcam Demonstration}
+        \label{fig:live_webcam}
+    \end{figure}
+    \noindent
+    \textbf{Implementation:} \texttt{emotion\_detection\textbackslash src\textbackslash real\_time\_webcam.py}
     
     \subsection{Discussion}
     \subsubsection{Basic Concept of Classification Evaluation}
@@ -176,9 +193,59 @@
     \end{table}
     \noindent
     Since our project is performing multi-class classification, an example of multi-class classification confusion matrix that an angry image is predicted as angry will be given as follows:
+    \begin{table}[H]
+        \centering
+        \begin{tabular}{c|c|c|c|c|c|c|c|c}
+             & & \multicolumn{7}{c}{\textbf{True Class}} \\
+            \cline{3-9}
+             & & Angry & Disgust & Fear & Happy & Neutral & Sad & Surprise \\
+            \cline{2-9}
+            \parbox[t]{2mm}{\multirow{7}{*}{\rotatebox[origin=c]{90}{\textbf{Predicted Class}}}} & Angry & TP & \multicolumn{6}{c}{FP} \\
+            \cline{2-9}
+             & Disgust & \multirow{6}{*}{FN} & \multicolumn{6}{c}{\multirow{6}{*}{TN}} \\ \cline{2-2}
+             & Fear & \\ \cline{2-2}
+             & Happy & \\ \cline{2-2}
+             & Neutral & \\  \cline{2-2}
+             & Sad & \\ \cline{2-2}
+             & Surprise & 
+        \end{tabular}
+        \caption{Multi-Class Confusion Matrix}
+        \label{tab:multi_class_confusion_matrix}
+    \end{table}
     
     \subsubsection{Model Evaluation}
+    \begin{table}[H]
+        \centering
+        \begin{tabular}{c|c|c|c|c|c|c|c|c|c}
+             & & \multicolumn{7}{c}{\textbf{True Class}} \\ \cline{3-9}
+             & & Angry & Disgust & Fear & Happy & Neutral & Sad & Surprise \\ \cline{2-10}
+            \parbox[t]{2mm}{\multirow{7}{*}{\rotatebox[origin=c]{90}{\textbf{Predicted Class}}}} & Angry & 557  &       9  &      59  &      53  &     134  &     127  &      19 & 958 \\ \cline{2-10}
+             & Disgust & 35  &      51  &       8  &       4  &       3  &      10  &       0 & 111 \\ \cline{2-10}
+             & Fear & 143  &      11  &     293  &      46  &     184  &     260  &      87 & 1024 \\ \cline{2-10}
+             & Happy & 45  &       2  &      19  &    1542  &      94  &      47  &      25 & 1774 \\ \cline{2-10}
+             & Neutral & 63  &       4  &      21  &      76  &     888  &     169  &      12 & 1233 \\ \cline{2-10}
+             & Sad & 136  &      12  &      72  &      51  &     317  &     647  &      12 & 1247 \\ \cline{2-10}
+             & Surprise & 32  &       1  &      74  &      58  &      70  &      14  &     582 & 831 \\ \cline{2-10}
+              & & 1011 & 90 & 546 & 1830 & 1690 & 1274 & 737 & 7178
+        \end{tabular}
+        \caption{Prediction Outcome}
+        \label{tab:prediction_outcome}
+    \end{table}
     
+    \begin{table}[H]
+        \centering
+        \begin{tabular}{c|c|c|c|c|c|c|c}
+             & Angry & Disgust & Fear & Happy & Neutral & Sad & Surprise \\ \hline \hline
+            Accuracy & 0.8809 &  0.9862 &  0.8629 &  0.9276 &  0.8402 &  0.8291 &  0.9437 \\ \hline
+            Precision & 0.5814 &  0.4595 &  0.2861 &  0.8692 &  0.7202 &  0.5188 &  0.7004 \\ \hline
+            Recall & 0.5509 &  0.5667 &  0.5366 &  0.8426 &  0.5254 &  0.5078 &  0.7897 \\ \hline
+            F1-score & 0.5658 &  0.5075 &  0.3732 &  0.8557 &  0.6076 &  0.5133 &  0.7423 \\
+        \end{tabular}
+        \caption{Accuracy, Precision, Recall and F1-score}
+        \label{tab:score}
+    \end{table}
+    \noindent
+    In terms of accuracy, each class has great performance with all over 82\% accuracy. However, only using accuracy could not truly evaluate the overall performance, thus, we take F1-score to access performance among different classes. Form the table above, we can see that the performance of class \textbf{Fear} is the worst while the performance of class \textbf{Happy} is the best. The performance different of them is relatively large 0.3732 vs 0.8557. The reason may be \textbf{Fear} faces have similar characteristic with \textbf{Angry}, \textbf{Sad} and \textbf{Surprise}, we can see in Table \ref{tab:prediction_outcome} that the mentioned three classes also have many samples mislabeled as \textbf{Fear}. In such case, the CNN model is not able to identify unique characteristics to differentiate those classes.
     
     \subsection{Conclusion}
     In this part of our project, we have developed a CNN model to perform facial recognition instantly. There are seven emotions can be classified, namely, angry, disgust, fear, happy, sad, surprise and neutral. The FER-2013 dataset is used which contain 28,709 examples in training set and 3,589 examples in testing set. After we train the model, around 60\% testing images can be correctly classified. There are some factors will affect the classification accuracy rate of the model, like the quality of the images, the resolution of the images in each emotion class, mislabeling in the dataset, etc. To improve the accuracy, we can relabel the dataset to avoid misleading result, which, however, is extremely time consuming. The other way to make some possible improvements is to try other models, like recurrent neural network (RNN) or use some advance techniques, like Cycle Generative Adversarial Network (Cycle GAN), VGG-Face model and residual neural network (resnet). \\
@@ -196,7 +263,7 @@
     In this project, we aimed to incorporate LSTM model in a Crypto Pairs Trading Strategy. We first identified potential cointegrated pairs (token0, token1) and their respective hedge ratio ($\beta$). Then we tried to use LSTM to predict the spread of the pair (i.e. token0 – $\beta~\cdot$ token1) using only price data. A simple pair trading strategy can be designed by keeping track of the long-term mean ($\mu$) and setting a threshold ($e$) – we may buy the spread when it is below $\mu - e$ and sell it when it is above $\mu + e$. It is under the assumption that the cointegrated relationship between the two token will remain unchanged, hence the spread will be a stationary time series and will revert to its long-term mean mu.
     
     \subsection{Dataset}
-    We have collected 10 months of minute-frequency data for 16 tokens with high market capitalization and trading volumes from binance api. It includes candlesticks data, stored in OHLCV format, aggregated in minute timeframe. 
+    We have collected 10 months of minute-frequency data for 16 tokens with high market capitalization and trading volumes from \href{https://www.binance.com/en}{Binance} api. It includes candlesticks data, stored in OHLCV\footnote{OHLCV is an aggregated form of market data standing for Open, High, Low, Close and Volume.} format, aggregated in minute timeframe. 
     
     \begin{table}[H]
         \centering
