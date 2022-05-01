@@ -4,18 +4,21 @@ from mtcnn.mtcnn import MTCNN
 import tensorflow as tf
 
 # Import the model
-trained_model = tf.keras.models.load_model("emotion_detection/src/model/trained_model.h5", compile = False)
+# trained_model = tf.keras.models.load_model("emotion_detection/src/model/trained_model.h5", compile = False)
+trained_model = tf.keras.models.load_model("emotion_detection/src/model/CNN_model.h5", compile = False)
 
 # prevents openCL usage and unnecessary logging messages
 cv2.ocl.setUseOpenCL(False)
 
 # dictionary which assigns each label an emotion (alphabetical order)
-emotion_dict = {0: "Angry", 1: "Disgust", 2: "Fear", 3: "Happy", 4: "Sad", 5: "Surprise", 6: "Neutral"}
+# emotion_dict = {0: "Angry", 1: "Disgust", 2: "Fear", 3: "Happy", 4: "Sad", 5: "Surprise", 6: "Neutral"}
+emotion_dict = {0: "Angry", 1: "Disgust", 2: "Fear", 3: "Happy", 4: "Neutral", 5: "Sad", 6: "Surprise"}
 
 detector = MTCNN()
 # start the webcam feed
 cap = cv2.VideoCapture(0)
-IMG_SIZE = (96, 96)
+# IMG_SIZE = (96, 96)
+IMG_SIZE = (48, 48)
 black = np.zeros(IMG_SIZE)
 
 while True:

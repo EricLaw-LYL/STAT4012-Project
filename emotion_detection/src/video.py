@@ -5,14 +5,17 @@ import tensorflow as tf
 
 # Import the models
 detector = MTCNN()
-trained_model = tf.keras.models.load_model("emotion_detection/src/model/trained_model.h5", compile = False)
+# trained_model = tf.keras.models.load_model("emotion_detection/src/model/trained_model.h5", compile = False)
+trained_model = tf.keras.models.load_model("emotion_detection/src/model/CNN_model.h5", compile = False)
 
 # prevents openCL usage and unnecessary logging messages
 cv2.ocl.setUseOpenCL(False)
 
 # dictionary which assigns each label an emotion (alphabetical order)
-emotion_dict = {0: "Angry", 1: "Disgust", 2: "Fear", 3: "Happy", 4: "Sad", 5: "Surprise", 6: "Neutral"}
-IMG_SIZE = (96, 96)
+# emotion_dict = {0: "Angry", 1: "Disgust", 2: "Fear", 3: "Happy", 4: "Sad", 5: "Surprise", 6: "Neutral"}
+emotion_dict = {0: "Angry", 1: "Disgust", 2: "Fear", 3: "Happy", 4: "Neutral", 5: "Sad", 6: "Surprise"}
+# IMG_SIZE = (96, 96)
+IMG_SIZE = (48, 48)
 
 # Import video
 video = cv2.VideoCapture("emotion_detection/video/Will_Smith.mp4")
