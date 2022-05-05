@@ -24,20 +24,23 @@
     \date{\today}
     \maketitle
     
-    % \newpage
+    \pagestyle{plain} 
+    \pagenumbering{roman}
+    
     \tableofcontents
-    \thispagestyle{empty}
-    \pagenumbering{gobble} 
-    \thispagestyle{empty}
+    \listoffigures
+    \listoftables
+    
     \newpage
     
     % Section 1
     \pagenumbering{arabic}
+    \pagestyle{fancy}
     \setcounter{page}{1}
     
     % Emotion Detection
     \section{Real Time Emotion Detection Deep Learning Model}
-    \textbf{This section is contributed by LAI Tsz Chun (SID: 1155125208), LAM Wai Chui (SID: 1155152095) and LAW Yiu Leung Eric (SID: 1155149315).}
+    \textbf{This section is contributed by LAI Tsz Chun (SID: 1155125208), LAM Wai Chiu (SID: 1155152095) and LAW Yiu Leung Eric (SID: 1155149315).}
     
     \subsection{Introduction}
     The study of Convolutional Neural Network (CNN) in this course has inspired us the importance of CNN in image classification. We further extend our inspiration to facial expression recognition. Emotion serves as an immediate means for humans to interact and sometimes it also affects human behavior. Hence, we aim to replicate human emotional recognition using CNN in a real time manner. \\
@@ -49,7 +52,7 @@
     \href{https://www.kaggle.com/datasets/msambare/fer2013}{FER-2013} \cite{FER2013} dataset from Kaggle is selected for model training. The data consists of $48 \times 48$ pixel grayscale images of faces. The faces have been automatically registered so that the face is more or less centred and occupies about the same amount of space in each image. The faces are categorized into seven categories (0=Angry, 1=Disgust, 2=Fear, 3=Happy, 4=Neutral, 5=Sad, 6=Surprise). The training set consists of 28,709 examples and the public test set consists of 3,589 examples. 
     \begin{figure}[H]
         \centering
-        \includegraphics[width = 0.9\textwidth]{emotion_detection/plot/train.pdf}
+        \includegraphics[width = 0.9\textwidth]{emotion\_detection/plot/train.pdf}
         \caption{Training Dataset}
         \label{fig:train_dataset}
     \end{figure}
@@ -351,10 +354,46 @@
     \end{table}
     
     \subsubsection{LSTM}
+    LSTM is one of the neural networks that is commonly used in financial analysis. LSTM consists of four different parts of the components, namely forget gate, input gate, cell state and the output cell. The forget gate is the part which is responsible for deciding whether the information from the previous step is kept or not by using the sigmoid layer. Also, the cell state enables LSTM model to deal with a long sequence problem. Those two parts make LSTM different from other neural networks.
     
-    \subsection{Model Analytic}
+    \subsection{LSTM Model Description}
+    \subsubsection{Model Setting}
+    \underline{\textbf{Input}:} \\
+    S1\_volume, S2\_volume, S1\_30\_ema, S2\_30\_ema, S1\_30\_rsi, S2\_30\_rsi, \\
+    S1\_30\_vol, S2\_30\_vol, S1\_60\_ema, S2\_60\_ema, S1\_60\_rsi, S2\_60\_rsi, \\
+    S1\_60\_vol, S2\_60\_vol, S1\_240\_ema, S2\_240\_ema, S1\_240\_rsi, S2\_240\_rsi, \\
+    S1\_240\_vol, S2\_240\_vol, S1\_480\_ema, S2\_480\_ema, S1\_480\_rsi, S2\_480\_rsi, \\
+    S1\_480\_vol, S2\_480\_vol, S1\_720\_ema, S2\_720\_ema, S1\_720\_rsi, S2\_720\_rsi, \\
+    S1\_720\_vol, S2\_720\_vol, S1\_1440\_ema, S2\_1440\_ema, S1\_1440\_rsi, \\
+    S2\_1440\_rsi, S1\_1440\_vol, S2\_1440\_vol, Spread\_open, Spread\_high, \\
+    Spread\_low, Spread\_close (S1 stands for ZIL S2 stands for EOS) \\
+    \\
+    \underline{\textbf{Layers}:}
+    \begin{enumerate}
+        \item LSTM layer, 256 neurons with return sequences enabled
+        \item LSTM layer, 256 neurons
+        \item Dropout layer, rate = 0.2
+        \item Dense layer, output shape = 1
+    \end{enumerate}
+    \\
+    Loss function: mean square error (mse) \\
+    Total trainable parameters: 831,745
+    Total non-trainable parameters: 0
     
-    \subsubsection{Model Training}
+    \subsubsection{Optimizers Selection}
+    As the standard deviation of the volume is larger than that of the spread of the closing price, using volume as the output variable can evaluate  performance of the LSTM model. Using different optimizers can widen the performance differences. The optimizers used in the evaluation are Adam, SGD and the RMSprop. The evaluation metrics are the time taken\footnote{The model is trained solely on a CPU, 7-th generation Intel i5} to train, the accuracy (root mean square error) of the prediction in the testing data, and the detail that can be predicted in the testing data.
+    
+    \begin{enumerate}
+        \item
+        {
+            \textbf{Adam}: \\
+            Adam is the algorithm that combines the concept of the momentum and the RMSprop algorithm. The advantage is that since it is the upgrade version of the momentum and RMSprop, the variation when approaching to the target will be smaller and the convergence rate will be higher. However, since the number of parameters needed to calculate is greater, the time taken to do the calculation in each step should be greater than the former. \\
+            \\
+            \textbf{Evaluation}: \\
+            Accuracy: 0.0324 \\
+            Time taken: 5 hours and 12 mins
+        }
+    \end{enumerate}
     
     \subsubsection{Model Testing}
     
