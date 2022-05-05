@@ -104,7 +104,7 @@
     Too avoid over fitting, we use a technique called augmentation to increase the diversity of your training set by applying random flip and slight rotation.
     \begin{figure}[H]
         \centering
-        \includegraphics[width = 0.7\textwidth]{emotion_detection/plot/augmentation.pdf}
+        \includegraphics[width = 0.5\textwidth]{emotion_detection/plot/augmentation.pdf}
         \caption{Augmentation}
         \label{fig:augmentation}
     \end{figure}
@@ -121,6 +121,8 @@
     \\
     In total, this model consists 33,631,815 parameters, in which 33,628,871 of them are trainable and 2,944 are non-trainable (parameters for batch normalization).
     
+    \subsubsection{Model Architecture}
+    The architecture of our CNN model is as next page.
     \begin{figure}[H]
         \centering
         \begin{minipage}[b]{.4\textwidth}
@@ -391,13 +393,75 @@
             \\
             \textbf{Evaluation}: \\
             Accuracy: 0.0324 \\
-            Time taken: 5 hours and 12 mins
+            Time taken: 5 hours and 12 minutes
+            \begin{figure}[H]
+                \centering
+                \includegraphics[width = 0.5\textwidth]{crypto/plot/LSTM_Adam.png}
+                \caption{LSTM with Adam}
+                \label{fig:LSTM_Adam}
+            \end{figure}
+            Using Adam can catch the overall movement of the true value. However, it cannot catch a sudden increase between 5,000 and 10,000 time steps. The model using Adam can catch the change between 15,000 and 20,000 time steps although the predicted magnitude and the true magnitude has an observable difference. In conclusion, using Adam gives an overall nice prediction and can predict the general shape of the true value.
+        }
+        
+        \item
+        {
+            \textbf{SGD}: \\
+            Stochastic Gradient Descent is the algorithm that is the upgrade of the Gradient Descent in terms of the computational power required in each update step. It applies the theory of the Law of Large Number so that although the number of data required in each step is very small, as the iteration is large, the result will converge to a nice manner. It is a computational power focus algorithm but not a performance focus algorithm. \\
+            \\
+            \textbf{Evaluation}: \\
+            Accuracy: 0.0461 \\
+            Time taken: 6 hours and 14 minutes
+            \begin{figure}[H]
+                \centering
+                \includegraphics[width = 0.5\textwidth]{crypto/plot/LSTM_SGD.png}
+                \caption{LSTM with SGD}
+                \label{fig:LSTM_SGD}
+            \end{figure}
+            The model using SGD is performing worst the using Adam. Although it still cannot catch the sudden increase between 5,000 and 10,000 time steps, the magnitude difference between the predicted value and the true value is very large between 15,000 and 20,000 time steps. The model using SGD cannot give a prediction of the overall shape of the true value. It can just tell the direction of the movement of the true value but perform poorly in magnitude. In other words, it just gives a very conservative prediction.
+        }
+        
+        \item
+        {
+            \textbf{RMSprop}: \\
+            RMSprop is the upgrade version of the momentum algorithm. It tackles the large variation problem when converging to the target and increases the convergence rate using the combined concept of the weighted mean and differentiation. Compared to the Adam, it calculated less parameter in each time steps, so the computational power required for each time step is smaller than that of the Adam. \\
+            \\
+            \textbf{Evaluation}: \\
+            Accuracy: 0.0458 \\
+            Time taken: 6 hours and 1 minute
+            \begin{figure}[H]
+                \centering
+                \includegraphics[width = 0.5\textwidth]{crypto/plot/LSTM_RMSprop.png}
+                \caption{LSTM with RMSprop}
+                \label{fig:LSTM_RMSprop}
+            \end{figure}
+            Using RMSprop gives the predicted value in an opposite side of the true value in many parts. In the time steps between 15,000 and 20,000, it gives a negative predicted value although the true value has a great positive value. Also, it gives an opposite direction prediction in the time step between 5,000 and 10,000. However, it performs better than the other model in the second large increase of the value. The predicted magnitude is very close to the true value. In general, the model does not perform well since the shape of the predicted value deviates a lot from the true value.
         }
     \end{enumerate}
+    After comparing three optimizers, we are going to use Adam as the optimizer for our LSTM model.
     
-    \subsubsection{Model Testing}
+    \subsubsection{Final Model Training}
+    From the previous section, the optimizer used for training the model is the Adam. The time taken for training is consistent to the previous that it takes around 5 hours. The root mean square error is 0.0025.
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width = 0.5\textwidth]{crypto/plot/test_closing.png}
+        \caption{Final Model Training}
+        \label{fig:final_training}
+    \end{figure}
+    \noindent
+    From the graph, the model fits very well that the model gives overall shape of the training data. Therefore, the complexity is enough for the model to fit the training dataset.
     
-    \subsubsection{Comparsion with Baseline Model}
+    \subsubsection{Final Model Testing}
+        \begin{figure}[H]
+        \centering
+        \includegraphics[width = 0.5\textwidth]{crypto/plot/test_spread.png}
+        \caption{Final Model Testing}
+        \label{fig:final_testing}
+    \end{figure}
+    \noindent
+    The root mean square error is 0.0214 \\
+    From the graph, the model can predict the overall shape of the true value. The prediction deviates a little bit from the true value in the time steps around 10,000. However, the model can predict the sharp drop of the true in the time steps around 15,000. The overall performance of the model is satisfactory.
+    
+    % \subsubsection{Comparsion with Baseline Model}
     % depends whether have time – use the exact same set of feature to fit into a baseline model like ARIMA
     
     \subsection{Backtesting}
