@@ -486,12 +486,37 @@
     \subsubsection{Out-of-sample Testing Performance}
     \begin{figure}[H]
         \centering
-        \includegraphics[width = 0.8\textwidth]{}
+        \includegraphics[width = 0.8\textwidth]{crypto/plot/backtest.png}
         \caption{Pair Trading Backtesting}
         \label{fig:crypto_backtest}
     \end{figure}
     
+    \begin{table}[H]
+        \centering
+        \begin{tabular}{l|cc}
+                                                                                                    & Pair Trade strategy with   LSTM & Buy and Hold Bitcoin \\
+            \hline \hline
+            Return in 15 days                                                                       & 14.9556\%                       & 17.0747\%            \\
+            \hline
+            \begin{tabular}[c]{@{}l@{}}Market (BTC) Corr.    \\ (using daily return)\end{tabular} & 0.51879                         & 1                    \\
+            \hline
+            Daily return sd.                                                                        & 0.1666\%                        & 1.9125\%             \\
+            \hline
+            \begin{tabular}[c]{@{}l@{}}Annualized Sharpe    \\ (risk-free rate = 0)\end{tabular}  & 1920                            & 1009                 \\
+            \hline
+            Maximum drawdown                                                                        & 0.356\%                         & 11.4711\%           
+        \end{tabular}
+        \caption{Portfolio Statistics of the Strategies}
+        \label{tab:crypto_strategy}
+    \end{table}
+    We set the initial capital to be equal to 1200 which enough us to buy 15 units of spread at the beginning minute. We emphasize that the equity curve above is out-of-sample and transaction cost included. \\
+    \\
+    From the above table, both strategies performed very well in these 15 days. Both having a double-digit return within half of a month. It is not so surprising that Buy and Hold Bitcoin outperforms our proposed strategy. One explanation could probably be that the pair trade strategy trades frequently which cost a lot transaction fee. Yet it is a surprise that the pair trade strategy has extremely small daily return standard deviation and Max. drawdown. The return sd of this strategy is 11.5 times less than the market. \\
+    \\
+    The market correlation of the proposed strategy is satisfactory. From figure \ref{fig:crypto_backtest}, our strategy did not lose much when the market is not performing well during March 17 to March 18 and even make some money during March 22 to March 23 when there is a 3\% drawdown in market. 
+    
     \subsection{Conclusion}
+    We proposed a new perspective of constructing a market neutral strategy for algo-trading. This strategy gives a decent return with a small volatility. But since we are having an extraordinary bull market in the test period. The strategy should be further tested for a longer period. Finally, we would like to mention that our strategy is not restricted to a weekly manner nor one single pair. It can be combined with a portfolio management algorithm to diversify asset specific risk. 
     
     \newpage
     % \thispagestyle{empty}
