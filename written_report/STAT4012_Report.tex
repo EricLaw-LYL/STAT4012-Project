@@ -466,6 +466,31 @@
     
     \subsection{Backtesting}
     
+    \subsubsection{Strategy}
+    To utilize our model prediction, the following strategy would be used. After we found the most cointegrated pair based on t-statistic, we calculate the coming 30 minutes percentage change ($p$) of the spread every 10 minutes and set a threshold ($e$) that is equal to 2 times the standard deviation of $p$. We buy the spread when $p > e$ and sell the spread when $p < -e$. If we are having positive position and predicting $p < -e$, we will sell all the position and sell a unit of the spread, and vice versa. The table below shows the first 3 and the last 3 trades where the return has considered the transaction cost (0.1\%). 
+    \begin{table}[H]
+        \centering
+        \begin{tabular}{lllllll}
+            TradeID & Action & Open\_time         & Open\_price & Close\_time        & Close\_price & return     \\
+            1       & Buy    & 18/3/2022 11:11:00 & -78.38774   & 18/3/2022 11:41:00 & -78.425718   & 0.99851552 \\
+            2       & Sell   & 20/3/2022 09:01:00 & -85.064713  & 20/3/2022 09:31:00 & -83.951233   & 0.9859102  \\
+            3       & Buy    & 20/3/2022 09:31:00 & -83.951233  & 20/3/2022 10:01:00 & -83.98921    & 0.99854763 \\
+            94      & Buy    & 30/3/2022 14:41    & -113.35343  & 30/3/2022 15:11    & -111.25685   & 1.01749594 \\
+            95      & Sell   & 30/3/2022 15:31    & -111.40513  & 30/3/2022 16:01    & -113.0473    & 1.0137405  \\
+            96      & Sell   & 31/3/2022 4:01     & -112.35409  & 31/3/2022 4:31     & -112.69271   & 1.00201393
+        \end{tabular}
+        \caption{Samples of Trading Detail}
+        \label{tab:crypto_trading}
+    \end{table}
+    
+    \subsubsection{Out-of-sample Testing Performance}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width = 0.8\textwidth]{}
+        \caption{Pair Trading Backtesting}
+        \label{fig:crypto_backtest}
+    \end{figure}
+    
     \subsection{Conclusion}
     
     \newpage
