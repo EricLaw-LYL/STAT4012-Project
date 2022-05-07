@@ -259,13 +259,13 @@
 
     
     \newpage
-    \section{Cryptocurrencies Price Forecasting}
+    \section{Cryptocurrencies Pairs Trading}
     \textbf{This section is contributed by KWOK Ho Hin (SID: 1155126159), TSOI Tung Sing (SID: 1155127274) and LO Chak Kin Steven (SID: 1155125491).}
     
     \subsection{Introduction}
     With the rapid advancement in Deep Learning, experts have been searching for applications of deep learning models in various industries, especially in Finance. Deep Learning models, particularly LSTM model, have been used extensively in developing quantitative trading strategies. Typically, researchers tries to use LSTM to predict stock prices, or implied volatility in the case of options. \\
     \\
-    In this project, we aimed to incorporate LSTM model in a Crypto Pairs Trading Strategy. We first identified potential cointegrated pairs (token0, token1) and their respective hedge ratio ($\beta$). Then we tried to use LSTM to predict the spread of the pair (i.e. token0 – $\beta~\cdot$ token1) using only price data. A simple pair trading strategy can be designed by keeping track of the long-term mean ($\mu$) and setting a threshold ($e$) – we may buy the spread when it is below $\mu - e$ and sell it when it is above $\mu + e$. It is under the assumption that the cointegrated relationship between the two token will remain unchanged, hence the spread will be a stationary time series and will revert to its long-term mean mu.
+    In this project, we aimed to incorporate LSTM model in a Crypto Pairs Trading Strategy \cite{pairs_trading}. We first identified potential cointegrated pairs (token0, token1) and their respective hedge ratio ($\beta$). Then we tried to use LSTM to predict the spread of the pair (i.e. token0 – $\beta~\cdot$ token1) using only price data. A simple pair trading strategy can be designed by keeping track of the long-term mean ($\mu$) and setting a threshold ($e$) – we may buy the spread when it is below $\mu - e$ and sell it when it is above $\mu + e$. It is under the assumption that the cointegrated relationship between the two token will remain unchanged, hence the spread will be a stationary time series and will revert to its long-term mean mu.
     
     \subsection{Dataset}
     We have collected 10 months of minute-frequency data for 16 tokens with high market capitalization and trading volumes from \href{https://www.binance.com/en}{Binance} api. It includes candlesticks data, stored in OHLCV\footnote{OHLCV is an aggregated form of market data standing for Open, High, Low, Close and Volume.} format, aggregated in minute timeframe. 
@@ -487,7 +487,7 @@
     \begin{figure}[H]
         \centering
         \includegraphics[width = 0.8\textwidth]{crypto/plot/backtest.png}
-        \caption{Pair Trading Backtesting}
+        \caption{Pairs Trading Backtesting}
         \label{fig:crypto_backtest}
     \end{figure}
     
